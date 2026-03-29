@@ -30,6 +30,8 @@ allowed-tools: [Read, Write, WebSearch, TodoWrite, AskUserQuestion]
 | 3 | `steps/03-user-flows.md` | 画出每个功能的用户操作流程 |
 | 4 | `steps/04-page-design.md` | 每个页面的布局、组件、数据需求 |
 | 5 | `steps/05-state-design.md` | 每个页面的所有状态（加载/空/正常/错误） |
+| 5b | `steps/05b-visual-spec.md` | 视觉规范（配色、字体、间距、圆角、阴影） |
+| 5c | `steps/05c-motion-spec.md` | 动效规范（动效程度、过渡参数、场景方案） |
 | 6 | `steps/06-wireframes.md` | 关键页面的 ASCII 线框图 |
 | 7 | `steps/07-responsive-strategy.md` | 移动端 vs 桌面端适配方案 |
 | 8 | `steps/08-self-check.md` | 完整性自检（清单在 `checklists/`） |
