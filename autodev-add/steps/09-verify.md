@@ -10,7 +10,12 @@
 2. **运行时验证**：
    - 新增的 API 端点用 curl 实际调用，检查响应
    - 新增的页面在浏览器中验证可用性
-3. **红线扫描**：参考 `autodev-shared/checklists/quality-redlines.md`
+3. **视觉一致性验证**（如涉及 UI）：
+   - 新功能的配色是否使用了 ui.md 视觉规范中的 CSS 变量/token？
+   - 字体层级、间距、圆角是否与现有页面一致？
+   - 加载状态和反馈动效是否符合 ui.md 动效规范？
+   - 如有 MCP 截图工具：截图对比新旧页面的视觉风格
+4. **红线扫描**：参考 `autodev-shared/checklists/quality-redlines.md`
 
 ### 9b. 回归验证（关键）
 
