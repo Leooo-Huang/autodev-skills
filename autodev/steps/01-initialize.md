@@ -112,7 +112,99 @@ gate_history: []
 
 **确保目录存在：** `docs/pipeline/` 和 `docs/plans/`。
 
-## 1.4 创建任务追踪
+## 1.4 环境能力探测（不可跳过，sleep 模式下尤其重要）
+
+<IMPORTANT>
+这一步是为了防止"自导自演降阶"——在没验证环境的情况下就假设某工具不可用，然后把功能延期到"V0.2"，最后用自己写的 plan 当免罪符。
+
+必须在 Bash 中实际执行下列命令，把结果写入 `docs/pipeline/env-capabilities.yaml`。后续任何"延期"决定都必须引用本文件中的真实状态。
+</IMPORTANT>
+
+### 探测命令（全部必跑）
+
+```bash
+# 运行时
+node --version 2>&1
+pnpm --version 2>&1
+npm --version 2>&1
+bun --version 2>&1
+
+# Python（如相关）
+python --version 2>&1
+uv --version 2>&1
+
+# Git
+git --version 2>&1
+git rev-parse --is-inside-work-tree 2>&1
+
+# 数据库客户端
+which psql 2>&1; psql --version 2>&1
+pg_isready 2>&1
+
+# Docker
+docker --version 2>&1
+docker ps 2>&1 | head -3
+
+# 云/部署 CLI
+vercel --version 2>&1
+gh --version 2>&1
+aws --version 2>&1
+```
+
+### 产出 `docs/pipeline/env-capabilities.yaml`
+
+```yaml
+# 由 autodev step 1.4 于 <ISO 时间戳> 生成。
+# 任何"因为没有 X 而延期 Y"的决策必须引用本文件中的对应行。
+
+probed_at: "<ISO timestamp>"
+platform: "<win32 | darwin | linux>"
+
+tools:
+  node:
+    available: true   # 根据实际 exit code + stdout 判断
+    version: "v24.13.0"
+    evidence: "node --version exit 0"
+  pnpm:
+    available: true
+    version: "10.30.3"
+    evidence: "pnpm --version exit 0"
+  npm:
+    available: true
+    version: "11.6.2"
+    evidence: "npm --version exit 0"
+  git:
+    available: true
+    version: "..."
+    in_git_repo: false   # 具体项目状态
+    evidence: "git rev-parse exit 128 'not a git repository'"
+  psql:
+    available: false
+    evidence: "'which psql' 无输出"
+    note: "数据库连接仍可用（Neon 连接字符串不需要本地 psql）"
+  docker:
+    available: true
+    version: "..."
+    daemon_running: true
+  vercel_cli:
+    available: false
+    evidence: "vercel --version: command not found"
+  gh_cli:
+    available: true
+    version: "..."
+
+# 重要：能力并非必须全部齐备——项目可能根本用不到某些工具。
+# 但凡声明"因为缺 X 所以跳过 Y"都必须对应到 available=false 的具体条目。
+```
+
+### 自检
+
+- [ ] 所有探测命令都在 Bash 中实际执行过（不是引用训练数据）
+- [ ] env-capabilities.yaml 已生成并完整
+- [ ] 每一条 `available: false` 都带有 `evidence` 字段（真实命令输出的简要摘录）
+- [ ] 不依赖本项目的工具也要探测并标注（例如非 Python 项目仍需标注 python 是否可用，便于后续判断）
+
+## 1.5 创建任务追踪
 
 用 TodoWrite 创建 8 个条目：
 1. 阶段 1：产品创意

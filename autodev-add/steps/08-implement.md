@@ -26,4 +26,14 @@
    - 修改现有文件时，只改必要的部分
    - 新增的 import/路由注册不要打乱现有代码结构
 
+## GAN 式对抗审查
+
+每个 task 完成后，调用 `autodev-review` skill。
+
+传入参数：
+- 维度 3 = "集成安全"（autodev-add 特有，检查与现有代码的兼容性）
+- acceptance_criteria 从 plan.md 当前 task 读取
+
+reviewer PASS 后，更新 plan.md：`status: pending` → `status: completed`
+
 --- 步骤 8 完成 ---

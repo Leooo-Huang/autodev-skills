@@ -4,26 +4,20 @@
 
 ## 执行
 
-1. **识别集成点**：
-   - 新功能需要修改哪些现有文件？
-   - 新功能需要创建哪些新文件？
-   - 数据库 migration 需要吗？
+调用 `autodev-plan` skill（增量模式）。
 
-2. **拆分任务**：
-   - 按实施顺序拆分为可执行的步骤
-   - 先做数据层（migration/model），再做 API，最后做 UI
-   - 每个任务标注涉及的文件
+在调用前提供以下上下文：
+- 新功能需要修改哪些现有文件
+- 新功能需要创建哪些新文件
+- 数据库 migration 是否需要
+- 哪些改动可能影响现有功能
 
-3. **风险评估**：
-   - 哪些改动可能影响现有功能？
-   - 需要先写什么测试来保护现有行为？
+`autodev-plan` 会自动执行：
+1. 调用 `superpowers:writing-plans`
+2. 为每个 task 补充 `acceptance_criteria` + `status: pending`
+3. 降阶信号词扫描
+4. 版本标注
 
-4. **降阶信号词扫描**：
-   - 检查计划中是否有 `for now`、`暂时`、`先用`、`placeholder` 等信号词
-   - 参考 `autodev-shared/checklists/quality-redlines.md`
-
-## 追加到文档
-
-在 `*-plan.md` 中追加新功能的任务章节（不修改已有任务）。
+**增量模式特殊行为**：追加到已有 `*-plan.md`（不修改已有任务）。
 
 --- 步骤 6 完成 ---

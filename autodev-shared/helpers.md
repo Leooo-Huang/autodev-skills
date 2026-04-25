@@ -31,3 +31,19 @@
 1. 读取 `config.yaml` 的 gates 字段
 2. 如果 gates[N] 存在且 requires == "approval"：暂停并通知用户
 3. 否则：自动通过，记录到 gate_history
+
+## #Generate-Handoff
+生成跨 session 交接文档（Harness Engineering）：
+1. 读取 `docs/pipeline/state.yaml` 获取当前阶段和主题
+2. 如果在 Phase 6，读取 `plan.md` 统计 task 完成情况（completed/pending/in_progress）
+3. 从 plan.md 收集所有 `decision:` 字段
+4. 按 `autodev-shared/templates/handoff.md` 模板写入 `.claude/handoff.md`
+5. 确认写入成功
+
+## #Update-Plan-Status
+更新 plan.md 中指定 task 的状态（Harness Engineering — 活文档）：
+1. 读取 plan.md
+2. 找到目标 task 的 `status:` 行
+3. 将 `status: pending` 替换为 `status: completed`
+4. 如有偏离决策，在 task 下添加 `decision: {原因}`
+5. 写入磁盘

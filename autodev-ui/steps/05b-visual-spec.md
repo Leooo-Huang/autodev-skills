@@ -84,10 +84,56 @@
 | 中 | `0 4px 6px rgba(0,0,0,0.07)` | 悬浮卡片、下拉菜单 |
 | 高 | `0 10px 15px rgba(0,0,0,0.1)` | 模态框、弹窗 |
 
+### 6. 图标系统（必选）
+
+<IMPORTANT>
+这是独立的必选决策，不是可选项。**禁止使用 emoji 作为 UI 图标**。
+
+原因：emoji 跨平台渲染不一致（Windows/macOS/Android/iOS 形态差异大）、无法自定义尺寸和颜色、深浅主题切换时对比度失控、无法 tree-shake、让界面看起来业余。
+</IMPORTANT>
+
+#### 必填字段
+
+| 字段 | 选项 | 说明 |
+|------|------|------|
+| 图标库 | Lucide / Heroicons / Phosphor / Radix Icons / Tabler / Remix Icon / 自定义 SVG | **必填，不能留空** |
+| 图标风格 | 线性（stroke）/ 填充（fill）/ 双色（duotone） | 整个项目保持统一，避免混用 |
+| 默认尺寸 | 12 / 14 / 16 / 20 / 24 / 32 px | 对应按钮内、标签前、导航、功能按钮、装饰图标 |
+| 描边粗细（线性风格） | 1 / 1.5 / 2 px | 与字重协调 |
+| 图标颜色 | `currentColor`（继承文字色）/ 指定 token | 默认用 `currentColor` 跟随主题 |
+
+#### 推荐选择规则
+
+| 项目类型 | 推荐 icon 库 | 理由 |
+|----------|------------|------|
+| shadcn/ui 项目 | **Lucide**（默认） | shadcn 官方配套，API 风格一致 |
+| Tailwind 项目 | Heroicons | Tailwind 团队维护，outline/solid 双版本 |
+| 需要丰富图标（>1000） | Phosphor | 6 种风格、图标数最多 |
+| 品牌感强 / 极简 | Radix Icons | 极简几何风，适合工具型产品 |
+| 国内用户为主 | Remix Icon / Tabler | 国内 CDN 可用，无墙风险 |
+
+与 Phase 2 `*-oss-scan.md` 对齐：若扫描清单已给出推荐 icon 库，优先选清单里的方案；选型后在 `*-design.md` 技术选型表和本 `*-ui.md` 视觉规范章节**同时记录**。
+
+#### emoji 的允许场景（白名单）
+
+仅以下场景允许 emoji，其他一律禁用：
+
+1. **i18n 文案 JSON 的内容值**（用户可见文案，不是 UI 元素），且 emoji 有明确语义
+2. **代码注释、commit message、README 等文档**
+3. **用户生成内容**（UGC）的展示（来自用户输入，不是我们写的）
+4. **品牌明确要求的标志**（如产品 logo 本身包含 emoji 字符）
+
+禁止场景（全部必须改用 icon 库）：
+
+- 按钮图标（删除、编辑、设置、关闭等）
+- 导航图标（侧栏、tab 栏、面包屑）
+- 状态指示（成功 / 失败 / 警告 / 加载 / 空状态）
+- 装饰图标（空状态插画、引导卡片、feature 列表的勾选）
+- **任何直接写在 JSX / Vue template / Svelte template 的 text 节点中的 emoji**
+
 ## 额外决策（可选）
 
 - 暗色模式：{支持 / 不支持 / 后续考虑}
-- 图标风格：{线性 / 填充}，图标库：{Lucide / Heroicons / 自定义}
 - 插图风格：{无 / 简约线条 / 3D / 手绘}
 
 ## 规则

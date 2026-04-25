@@ -12,24 +12,33 @@ allowed-tools: [Agent, Bash, Read, Write, Skill, TodoWrite, AskUserQuestion]
 | 阶段 | 名称 | 执行方式 | 产出 |
 |------|------|---------|------|
 | 1 | 产品创意 | `autodev-ideation` 技能 | `*-ideation.md` |
-| 2 | 产品规格 | MECE 分解 + `superpowers:brainstorming` | `*-design.md` |
+| 2 | 产品规格 | MECE 分解 + **`/last30days` 开源扫描** + `superpowers:brainstorming` | `*-oss-scan.md` + `*-design.md` |
 | 3 | UI/UX 设计 | `autodev-ui` 技能 | `*-ui.md` |
 | 4 | API 设计 | `autodev-api` 技能 | `*-api.md` |
-| 5 | 规划 | `superpowers:writing-plans` | `*-plan.md` |
+| 5 | 规划 | `autodev-plan`（含 `superpowers:writing-plans`） | `*-plan.md` |
 | 5.5 | 索引与规则 | 内置提取 | `*-index.md` + `*-rules.md` |
-| 6 | 开发 | `superpowers:subagent-driven-development` | 代码提交 |
-| 7 | 验证 | `acceptance-testing` 技能 | 测试通过 |
+| 5.9 | **Plan GAN**（方案对抗审查） | `autodev-review --target plan` | `plan.md` 追加 `plan_review_history` |
+| 6 | 开发 | `superpowers:subagent-driven-development` + **每 task 双层 GAN**（`--target code` + `--target ui`） | 代码提交 |
+| 7 | 验证 | `autodev-verify`（含 `acceptance-testing`） | 验收报告 |
+| 7.5 | **Global GAN**（全局对抗审查） | `autodev-review --target global` | `docs/pipeline/global-review.md` |
 | 8 | 交付 | `superpowers:finishing-a-development-branch` + 部署 | 合并/PR |
 
-**文档链：** `ideation.md → design.md → ui.md → api.md → plan.md → index.md + rules.md → 代码 → 验证 → 交付`
+**文档链：** `ideation.md → oss-scan.md + design.md → ui.md → api.md → plan.md → index.md + rules.md → [Plan GAN] → 代码（含 Code+UI GAN）→ 验证 → [Global GAN] → 交付`
+
+**GAN 3 处**：
+- 🔍 **Plan GAN**（5.9）— 代码开发前，对当前方案进行对抗审查
+- 🎨 **UI GAN**（6 内每 UI task 后）— UI 代码实现后，对界面和交互进行对抗审查
+- 🌐 **Global GAN**（7.5）— 全部完成后，对全局进行对抗审查
 
 ## 质量红线
 
-4 条红线贯穿全流水线（详见 `autodev-shared/checklists/quality-redlines.md`）：
+6 条红线贯穿全流水线（详见 `autodev-shared/checklists/quality-redlines.md`）：
 1. **禁止占位** — 无 TODO/pass/空函数体
 2. **禁止 Mock** — 无 mock/dummy/fake 数据替代真实调用
 3. **禁止降阶** — 按设计文档方案实现
 4. **禁止过时** — WebSearch 验证版本号
+5. **优先复用开源** — Phase 2 必须用 `/last30days` + WebSearch 扫描每个 R 能力的开源方案，默认复用、自研需说明理由（扫描器检查 `oss-scan.md` 存在 + `design.md` 有"复用决策表"）
+6. **前端禁用 emoji 作为 UI 图标** — `ui.md` 视觉规范第 6 项必须指定 icon 库（Lucide / Heroicons / Phosphor / Radix Icons / Tabler / Remix Icon），前端代码的 JSX/template text 节点禁写 emoji unicode；白名单：i18n 文案 JSON 值、注释、UGC、文档（UI GAN 维度 4 强制扫描，命中即 FAIL）
 
 ## 何时使用
 
@@ -46,10 +55,10 @@ allowed-tools: [Agent, Bash, Read, Write, Skill, TodoWrite, AskUserQuestion]
 | 4 | `steps/04-phase-2-spec.md` | 阶段 2：MECE 分解 + 产品规格 |
 | 5 | `steps/05-phase-3-ui.md` | 阶段 3：UI/UX 设计 |
 | 6 | `steps/06-phase-4-api.md` | 阶段 4：API 设计 |
-| 7 | `steps/07-phase-5-planning.md` | 阶段 5：规划（含降阶扫描） |
+| 7 | `steps/07-phase-5-planning.md` | 阶段 5：规划（含降阶扫描）+ **5.9 Plan GAN**（`--target plan`） |
 | 8 | `steps/08-phase-5.5-index-rules.md` | 阶段 5.5：生成 index.md + rules.md |
-| 9 | `steps/09-phase-6-development.md` | 阶段 6：开发（subagent 上下文 + 红线传递） |
-| 10 | `steps/10-phase-7-verification.md` | 阶段 7：红线扫描 + acceptance-testing |
+| 9 | `steps/09-phase-6-development.md` | 阶段 6：开发（subagent 上下文 + 红线传递）+ **双层 GAN**（code + ui） |
+| 10 | `steps/10-phase-7-verification.md` | 阶段 7：红线扫描 + acceptance-testing + **7.5 Global GAN**（`--target global`） |
 | 11 | `steps/11-phase-8-delivery.md` | 阶段 8：代码集成 + hooks 推荐 + 部署 |
 | 12 | `steps/12-resume-protocol.md` | 恢复协议 |
 | 13 | `steps/13-sleep-mode.md` | 睡眠模式（Ralph Loop） |

@@ -22,5 +22,17 @@
 - 数据模型列表（每个实体是一个追踪项）
 - API 端点列表（每个端点是一个追踪项）
 
-**从 `*-plan.md` 提取：**
+**从 `*-plan.md` 提取（Harness Engineering 对齐）：**
 - 任务列表（每个 Task 是一个追踪项）
+- **`acceptance_criteria`**：如果 task 有 acceptance_criteria 字段，提取每条标准作为子追踪项
+- **`status`**：读取 task 的 status 字段（pending / completed），与代码实际状态对比
+- **`decision`**：如果 task 有 decision 字段，记录偏离决策（同步时保留，不覆盖）
+- **`review_result`**：如果 task 有 review_result 字段（GAN 审查分数），记录并保留
+
+**从 `*-index.md` 提取：**
+- 知识地图条目（每行指针是否指向实际存在的文件和章节）
+- 如果发现指针指向不存在的文件或章节 → 标记为 `[断链]`
+
+**从 `*-rules.md` 提取：**
+- 技术栈版本号 → 与 package.json/pyproject.toml 实际版本对比
+- 如果发现版本不一致 → 标记为 `[版本漂移]`

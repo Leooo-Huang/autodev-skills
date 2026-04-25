@@ -2,6 +2,22 @@
 
 **目标**：从断点恢复流水线执行。
 
+## Handoff 优先恢复（Harness Engineering）
+
+在检查 state.yaml 之前，先检查 `.claude/handoff.md` 是否存在：
+
+1. 如果 `.claude/handoff.md` 存在：
+   - 读取 handoff.md 全文
+   - 从中获取精确的 phase、task、进度信息
+   - 按 handoff 记录的位置继续执行
+   - 恢复成功后删除 handoff.md
+   - 展示："从交接文档恢复：{主题}，Phase {N}, Task {M}/{Total}。"
+
+2. 如果 handoff.md 不存在：
+   - 按下面的 state.yaml 恢复逻辑执行
+
+---
+
 当 `/autodev --resume` 或 `/autodev` 发现已有 `state.yaml` 时：
 
 1. **读取 `state.yaml`**

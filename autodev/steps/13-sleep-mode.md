@@ -29,6 +29,27 @@ Ralph Loop 能在上下文压缩后生存，因为：
 - 每次迭代都是全新的 "读状态 → 判断下一步 → 执行" 循环
 - 不依赖任何内存中的状态
 
+## 交接文档生成（Harness Engineering — 跨 Session 连续性）
+
+当 Ralph Loop 触发新一轮迭代时（即 context window 即将耗尽），
+必须在当前 session 结束前生成交接文档：
+
+1. 读取 `docs/pipeline/state.yaml` 获取当前阶段和主题
+2. 如果在 Phase 6，读取 `plan.md` 获取 task 级进度（哪些 completed、哪个 in progress）
+3. 从 plan.md 收集所有 `decision:` 字段
+4. 按照 `autodev-shared/templates/handoff.md` 模板生成 `.claude/handoff.md`
+5. 写入磁盘
+
+**为什么需要 handoff.md：**
+- `state.yaml` 只知道 "Phase 6 进行中"
+- `handoff.md` 知道 "Phase 6, Task 4/7, 第 3 个组件完成, 正在做第 4 个"
+- 精确度差异决定了恢复效率：粗粒度恢复可能重做已完成的工作
+
+**生命周期：**
+- 创建时机：每次 context window 即将耗尽时
+- 读取时机：SessionStart hook 检测到后注入新 session
+- 删除时机：恢复后、当前 task 继续完成后删除
+
 ## Completion Promise
 
 <IMPORTANT>

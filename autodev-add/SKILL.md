@@ -42,6 +42,7 @@ allowed-tools:
 | 4 | `steps/04-incremental-ui.md` | 新功能的 UI 设计（与现有页面协调） |
 | 5 | `steps/05-incremental-api.md` | 新功能的 API 设计（复用现有数据模型） |
 | 6 | `steps/06-incremental-plan.md` | 新功能的实施计划 |
+| **6.5** | **（内嵌在步骤 6 之后）** | **设计文档预更新——写代码前先把新功能的设计写入文档（ideation/design/api/rules）** |
 | 7 | `steps/07-update-spec.md` | 更新 index.md + rules.md |
 | 8 | `steps/08-implement.md` | 实现新功能 |
 | 9 | `steps/09-verify.md` | 验证（新功能 + 不破坏已有功能） |
